@@ -48,6 +48,7 @@ import {
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
+  Optional,
 } from '@angular/core';
 import { ScaleLinear, ScaleTime, scaleLinear, scaleTime } from 'd3-scale';
 import { Subject, merge } from 'rxjs';
@@ -63,6 +64,9 @@ import {
   DtViewportResizer,
   isDefined,
   _readKeyCode,
+  DT_UI_TEST_CONFIG,
+  DtUiTestConfiguration,
+  dtSetUiTestAttribute,
 } from '@dynatrace/barista-components/core';
 
 import {
@@ -260,6 +264,10 @@ export class DtEventChart<T> implements AfterContentInit, OnInit, OnDestroy {
     // tslint:disable-next-line: no-any
     @Inject(DOCUMENT) private _document: any,
     private _platform: Platform,
+    @Optional()
+    @Inject(DT_UI_TEST_CONFIG)
+    private _config?: DtUiTestConfiguration,
+    private _elementRef?: ElementRef<HTMLElement>,
   ) {}
 
   ngOnInit(): void {
@@ -505,6 +513,12 @@ export class DtEventChart<T> implements AfterContentInit, OnInit, OnDestroy {
     if (!this._overlayRef.hasAttached()) {
       this._overlayRef.attach(this._portal);
     }
+    dtSetUiTestAttribute(
+      this._overlayRef.overlayElement,
+      this._overlayRef.overlayElement.id,
+      this._elementRef,
+      this._config,
+    );
   }
 
   /** Update the overlay position and the implicit context. */
